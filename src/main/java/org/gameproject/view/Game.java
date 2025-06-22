@@ -1,11 +1,15 @@
 package org.gameproject.view;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.gameproject.util.KeyHandler;
+import javafx.scene.canvas.Canvas;
 
 public class Game extends Application {
 
@@ -19,33 +23,46 @@ public class Game extends Application {
     final int screenWidth = tileSize * maxScreenCol; // 1536 pixels wide
     final int screenHeight = tileSize * maxScreenRow; // 1152 pixels tall
 
+    //Game loop
+    private AnimationTimer gameLoop;
+    private final int FPS = 144; // Frames per second
+
+    //Canvas for displaying the game
+    private Canvas canvas;
+
     //Key handler instance
     private final KeyHandler keyHandler = KeyHandler.get();
 
     //Default position
     private int playerX = 100; // Default player X position
-    private int playerY = 100; // Default player Y position
-    private int playerSpeed = 4; // Default player speed
+    private  int playerY = 100; // Default player Y position
+    private final int playerSpeed = 4; // Default player speed
 
-    public Game(){
+    public Game() {
 
     }
 
     @Override
     public void start(Stage window) {
+        this.canvas = new Canvas(this.screenWidth, this.screenHeight);
+        startGameLoop();
         Pane root = new Pane();
+        root.getChildren().add(this.canvas);
         Scene gameScene = new Scene(root, this.screenWidth, this.screenHeight);
+
+        //Setup key event handlers
         gameScene.setOnKeyPressed(event -> {
             keyHandler.handleKeyPress(event.getCode());
         });
         gameScene.setOnKeyReleased(event -> {
             keyHandler.handleKeyRelease(event.getCode());
         });
+
+
         window.setScene(gameScene);
         window.setResizable(true);
         window.setTitle("Game");
         window.setOnCloseRequest(event -> {
-            // Handle window close request if needed
             System.out.println("Window is closing");
             Platform.exit();
         });
@@ -57,11 +74,76 @@ public class Game extends Application {
 
     }
 
-    public void update(){
+/**
+     * Updates the game state based on user input.
+     * This method is called in a loop to continuously update the game logic.
+     */
+    public void update() {
 
+        if (keyHandler.isUpPressed()) {
+            playerY -= playerSpeed; // Move player up
+        }
+
+        if (keyHandler.isDownPressed()) {
+            playerY += playerSpeed; // Move player down
+        }
+
+        if (keyHandler.isLeftPressed()) {
+            playerX -= playerSpeed; // Move player left
+        }
+
+        if (keyHandler.isRightPressed()) {
+            playerX += playerSpeed; // Move player right
+        }
     }
 
-    public void draw(){
+    /**
+     * Starts the game loop that updates and draws the game at a fixed frame rate.
+     * This method initializes the AnimationTimer and starts it.
+     */
+    public void startGameLoop() {
+        this.gameLoop = new AnimationTimer() {
+            private long lastTime = System.nanoTime(); // Initialize lastTime to the current time
+            private double delta = 0;
+            private int drawCount = 0;
+            private long timer = 0;
+
+            @Override
+            public void handle(long now) {
+
+
+                double drawInterval = 1_000_000_000.0 / FPS; // Interval in nanoseconds
+                delta += (now - lastTime) / drawInterval; // Calculate delta time
+                timer += (now - lastTime);
+                lastTime = now; // Update lastTime to the current time
+
+
+                if (delta >= 1) { // If enough time has passed
+                    update();
+                    draw();
+                    delta--; // Decrease delta by 1 to reset for the next frame
+                    drawCount++;
+                }
+                if (timer >= 1_000_000_000) { // If 1 second has passed
+                    System.out.println("FPS: " + drawCount);
+                    drawCount = 0; // Reset draw count for the next second
+                    timer = 0; // Reset timer
+                }
+            }
+        };
+        this.gameLoop.start();
+    }
+
+    /**
+     * Draws the game elements on the canvas.
+     * This method is called in a loop to continuously update the game visuals.
+     */
+    public void draw() {
+        GraphicsContext gc = this.canvas.getGraphicsContext2D();
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0,0, screenWidth, screenHeight);
+        gc.setFill(Color.WHITE);
+        gc.fillRect(this.playerX, this.playerY, tileSize, tileSize);
 
     }
 
