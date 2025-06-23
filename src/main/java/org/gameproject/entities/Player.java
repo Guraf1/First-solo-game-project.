@@ -69,6 +69,17 @@ public class Player extends Creature {
             playerXPos += playerSpeed; // Move player right
             lastDirection = "right";
         }
+        spriteCounter++;
+
+        if (spriteCounter > 25) {  // Change sprite every 10 frames
+            if (spriteNum == 1) {
+                spriteNum = 2;
+            } else if (spriteNum == 2) {
+                spriteNum = 1;
+            }
+            spriteCounter = 0; // Reset counter
+        }
+
     }
 
     public void draw(GraphicsContext gc) {
@@ -78,17 +89,41 @@ public class Player extends Creature {
         gc.setImageSmoothing(false); //Looks like shit with smoothing on.
 
         if (keyHandler.isLeftPressed()){
-            gc.drawImage(left1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            if (spriteNum == 1){
+                gc.drawImage(left1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            } else if (spriteNum == 2) {
+                gc.drawImage(left2, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            }
+
         } else if (keyHandler.isDownPressed()){
-            gc.drawImage(down1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            if (spriteNum == 1){
+                gc.drawImage(down1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            } else if (spriteNum == 2) {
+                gc.drawImage(down2, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            }
         } else if (keyHandler.isRightPressed()){
-            gc.drawImage(right1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            if (spriteNum == 1){
+                gc.drawImage(right1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            } else if (spriteNum == 2) {
+                gc.drawImage(right2, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            }
+
         } else if (keyHandler.isUpPressed()){
-            gc.drawImage(up1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            if (spriteNum == 1){
+                gc.drawImage(up1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            } else if (spriteNum == 2) {
+                gc.drawImage(up2, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            }
         }
         else {
             switch (lastDirection){
-            case "up" -> gc.drawImage(up1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            case "up" -> {if (spriteNum == 1){
+                gc.drawImage(up1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+                }
+                if (spriteNum == 2){
+                gc.drawImage(up2, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+                }
+            }
             case "down" -> gc.drawImage(down1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
             case "left" -> gc.drawImage(left1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
             case "right" -> gc.drawImage(right1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
