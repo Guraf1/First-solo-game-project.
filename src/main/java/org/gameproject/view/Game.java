@@ -8,6 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import org.gameproject.entities.Player;
 import org.gameproject.util.KeyHandler;
 import javafx.scene.canvas.Canvas;
 
@@ -33,10 +34,8 @@ public class Game extends Application {
     //Key handler instance
     private final KeyHandler keyHandler = KeyHandler.get();
 
-    //Default position
-    private int playerX = 100; // Default player X position
-    private  int playerY = 100; // Default player Y position
-    private final int playerSpeed = 4; // Default player speed
+    //Player instance
+    private Player player = new Player(this);
 
     public Game() {
 
@@ -73,30 +72,6 @@ public class Game extends Application {
         root.requestFocus();
 
     }
-
-/**
-     * Updates the game state based on user input.
-     * This method is called in a loop to continuously update the game logic.
-     */
-    public void update() {
-
-        if (keyHandler.isUpPressed()) {
-            playerY -= playerSpeed; // Move player up
-        }
-
-        if (keyHandler.isDownPressed()) {
-            playerY += playerSpeed; // Move player down
-        }
-
-        if (keyHandler.isLeftPressed()) {
-            playerX -= playerSpeed; // Move player left
-        }
-
-        if (keyHandler.isRightPressed()) {
-            playerX += playerSpeed; // Move player right
-        }
-    }
-
     /**
      * Starts the game loop that updates and draws the game at a fixed frame rate.
      * This method initializes the AnimationTimer and starts it.
@@ -140,14 +115,44 @@ public class Game extends Application {
      */
     public void draw() {
         GraphicsContext gc = this.canvas.getGraphicsContext2D();
-        gc.setFill(Color.BLACK);
-        gc.fillRect(0,0, screenWidth, screenHeight);
-        gc.setFill(Color.WHITE);
-        gc.fillRect(this.playerX, this.playerY, tileSize, tileSize);
+        player.draw(gc);
 
+    }
+
+    public void update(){
+        player.update();
     }
 
     public static void appMain(String[] args) {
         launch(args);
     }
+
+    /**
+     * Returns the tile size used in the game.
+     *
+     * @return the size of each tile in pixels
+     */
+    public int getTileSize() {
+        return this.tileSize;
+    }
+
+    /**
+     * Returns the width of the game screen.
+     *
+     * @return the width of the game screen in pixels
+     */
+    public int getScreenWidth() {
+        return this.screenWidth;
+    }
+
+    /**
+     * Returns the height of the game screen.
+     *
+     * @return the height of the game screen in pixels
+     */
+    public int getScreenHeight() {
+        return this.screenHeight;
+    }
+
+
 }
