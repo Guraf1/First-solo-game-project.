@@ -33,6 +33,9 @@ public class Player extends Creature {
         loadPlayerImage(); // Load player images
     }
 
+    /**
+     * Loads the images related to character movement.
+     */
     public void loadPlayerImage() {
             up1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/playerUp1.png")));
             up2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/playerUp2.png")));
@@ -42,7 +45,14 @@ public class Player extends Creature {
             left2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/playerLeft2.png")));
             right1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/playerRight1.png")));
             right2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/playerRight2.png")));
-        }
+            idleDown = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/idleDown.png")));
+            idleLeft= new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/idleLeft.png")));
+            idleRight = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/idleRight.png")));
+            idleUp = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/idleUp.png")));
+
+
+
+    }
 
 
     public void attack(){
@@ -117,16 +127,11 @@ public class Player extends Creature {
         }
         else {
             switch (lastDirection){
-            case "up" -> {if (spriteNum == 1){
-                gc.drawImage(up1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
-                }
-                if (spriteNum == 2){
-                gc.drawImage(up2, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
-                }
-            }
-            case "down" -> gc.drawImage(down1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
-            case "left" -> gc.drawImage(left1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
-            case "right" -> gc.drawImage(right1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            case "up" -> gc.drawImage(idleUp, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+
+            case "down" -> gc.drawImage(idleDown, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            case "left" -> gc.drawImage(idleLeft, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
+            case "right" -> gc.drawImage(idleRight, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
             }
         }
 
