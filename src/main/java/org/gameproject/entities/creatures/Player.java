@@ -37,27 +37,26 @@ public class Player extends Creature {
      * Loads the images related to character movement.
      */
     public void loadPlayerImage() {
-            up1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/playerUp1.png")));
-            up2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/playerUp2.png")));
-            down1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/playerDown1.png")));
-            down2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/playerDown2.png")));
-            left1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/playerLeft1.png")));
-            left2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/playerLeft2.png")));
-            right1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/playerRight1.png")));
-            right2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/playerRight2.png")));
-            idleDown = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/idleDown.png")));
-            idleLeft= new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/idleLeft.png")));
-            idleRight = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/idleRight.png")));
-            idleUp = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/idleUp.png")));
-
-
+        String path = "/player/images/";
+            up1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path + "playerUp1.png")));
+            up2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path + "playerUp2.png")));
+            down1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path + "playerDown1.png")));
+            down2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path + "playerDown2.png")));
+            left1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path + "playerLeft1.png")));
+            left2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path + "playerLeft2.png")));
+            right1 = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path + "playerRight1.png")));
+            right2 = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path + "playerRight2.png")));
+            idleDown = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path + "idleDown.png")));
+            idleLeft= new Image(Objects.requireNonNull(getClass().getResourceAsStream(path + "idleLeft.png")));
+            idleRight = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path + "idleRight.png")));
+            idleUp = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path + "idleUp.png")));
 
     }
-
 
     public void attack(){
 
     }
+
     /**
      * Updates the game state based on user input.
      * This method is called in a loop to continuously update the game logic.
@@ -93,7 +92,7 @@ public class Player extends Creature {
     }
 
     public void draw(GraphicsContext gc) {
-        gc.setFill(Color.WHITESMOKE);
+        gc.setFill(Color.DARKBLUE);
 
         gc.fillRect(0,0, gameWindow.getScreenWidth(), gameWindow.getScreenHeight());
         gc.setImageSmoothing(false); //Looks like shit with smoothing on.
@@ -128,16 +127,11 @@ public class Player extends Creature {
         else {
             switch (lastDirection){
             case "up" -> gc.drawImage(idleUp, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
-
             case "down" -> gc.drawImage(idleDown, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
             case "left" -> gc.drawImage(idleLeft, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
             case "right" -> gc.drawImage(idleRight, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
             }
         }
-
-
-//        gc.drawImage(up1, playerXPos, playerYPos, gameWindow.getTileSize(), gameWindow.getTileSize());
-//
     }
 
 
