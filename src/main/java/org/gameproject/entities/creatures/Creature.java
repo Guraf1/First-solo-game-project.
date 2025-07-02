@@ -1,4 +1,4 @@
-package org.gameproject.entities;
+package org.gameproject.entities.creatures;
 
 import javafx.scene.image.Image;
 
@@ -11,15 +11,16 @@ public abstract class Creature {
     private final double attackPower;
     private final double defence;
     private final int level;
-    private int x;
-    private int y;
     private boolean isAlive;
     private int speed;
-    protected Image up1, up2, down1, down2, left1, left2, right1, right2; //walk sprites
-    protected Image idleUp, idleDown, idleLeft, idleRight;
-    protected String direction;
+    protected BufferedImage up1, up2, down1, down2, left1, left2, right1, right2; //walk sprites; //TODO: bytt fra Image -> BufferedImage
+    protected BufferedImage idleUp, idleDown, idleLeft, idleRight;
+    protected String lastDirection = "down"; // Last direction a creature moved
     protected int spriteCounter = 0;
     protected int spriteNum = 1;
+    protected int xPos;
+    protected int yPos;
+    protected boolean isMoving;
 
 
     public Creature(String name, double health, double attackPower, double defence, int level) {
@@ -34,6 +35,82 @@ public abstract class Creature {
         // Method to perform an attack
     }
 
-    // Getters and setters for the attributes can be added here
+    public abstract void update();
+
+
+    /**
+     * Returns the sprite number indicating the walk cycle frames.
+     * @return Which frame of the animation cycle is active.
+     */
+    public int getSpriteNum() {
+        return this.spriteNum;
+    }
+
+    /**
+     * Returns the sprite image as requested.
+     * <p>
+     * <b>Available sprite options:</b>
+     * <ul>
+     *   <li><em>Walking sprites:</em> up1, up2, down1, down2, left1, left2, right1, right2</li>
+     *   <li><em>Idle sprites:</em> idleUp, idleDown, idleLeft, idleRight</li>
+     * </ul>
+     * <p>
+     * @param spriteName The image name of a sprite.
+     * @return Sprite image with direction indicated by the param.
+     */
+    public BufferedImage getSprite(String spriteName) {
+        return switch (spriteName) {
+            case "up1" -> up1;
+            case "up2" -> up2;
+            case "down1" -> down1;
+            case "down2" -> down2;
+            case "left1" -> left1;
+            case "left2" -> left2;
+            case "right1" -> right1;
+            case "right2" -> right2;
+            case "idleUp" -> idleUp;
+            case "idleDown" -> idleDown;
+            case "idleLeft" -> idleLeft;
+            case "idleRight" -> idleRight;
+            default -> idleDown;
+        };
+    }
+
+    /**
+     * Returns the last direction the creature moved.
+     * @return "up", "left", "right" or "down".
+     */
+    public String getLastDirection(){
+        return this.lastDirection;
+    }
+
+    /**
+     * Returns the x position of the creature.
+     * @return x position of the creature.
+     */
+    public int getxPos() {
+        return xPos;
+    }
+
+    /**
+     * Returns the y position of the creature.
+     * @return y position of the creature.
+     */
+    public int getYPos(){
+        return yPos;
+    }
+    /**
+     * Returns this class object.
+     * @return this class object.
+     */
+    public Creature getCreatureClass(){
+        return this;
+    }
+
+    public boolean isMoving(){
+        return this.isMoving;
+    }
+
+
 
 }
