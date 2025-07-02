@@ -3,14 +3,18 @@ package org.gameproject.entities.map;
 
 import javafx.scene.image.Image;
 
+import java.awt.image.BufferedImage;
+
 public class Tile {
     protected int tileWidth;
     protected int tileHeight;
     protected boolean interactable = false;
     protected boolean collision = false;
 
-    protected Image tileImage; //Base background image
-    protected Image tileImageFlavour; //Additional spice on top of the base image
+    protected BufferedImage tileImage;
+    protected BufferedImage tileImageFlavour;
+//    protected Image tileImage; //Base background image
+//    protected Image tileImageFlavour; //Additional spice on top of the base image
 
     /**
      * Constructor for setting all the fields.
@@ -20,8 +24,8 @@ public class Tile {
      * @param collision Defines if entities can move on top of this tile or not.
      * @param tileImage The image a tile should represent.
      */
-    public Tile(int tileWidth, int tileHeight, boolean interactable, boolean collision, Image tileImage,
-                Image tileImageFlavour){
+    public Tile(int tileWidth, int tileHeight, boolean interactable, boolean collision, BufferedImage tileImage,
+                BufferedImage tileImageFlavour){
     this.tileWidth = tileWidth;
     this.tileHeight = tileHeight;
     this.interactable = interactable;
@@ -37,7 +41,7 @@ public class Tile {
      * @param tileImage The image a tile should represent.
      * @param tileImageFlavour An image to put on top of tileImage.
      */
-    public Tile(int tileWidth, int tileHeight, Image tileImage, Image tileImageFlavour){
+    public Tile(int tileWidth, int tileHeight, BufferedImage tileImage, BufferedImage tileImageFlavour){
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
         this.tileImage = tileImage;
@@ -50,13 +54,13 @@ public class Tile {
      * @param tileHeight The height of the tile in pixels.
      * @param tileImage The image of the tile.
      */
-    public Tile(int tileWidth, int tileHeight, Image tileImage){
+    public Tile(int tileWidth, int tileHeight, BufferedImage tileImage){
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
         this.tileImage = tileImage;
     }
 
-    public Image getTileImage(){
+    public BufferedImage getTileImage(){
         return this.tileImage;
     }
 }
