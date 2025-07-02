@@ -2,9 +2,16 @@ package org.gameproject.view;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import org.gameproject.entities.creatures.Creature;
+import org.gameproject.entities.map.Tile;
 import org.gameproject.util.KeyHandler;
 import org.gameproject.util.TileManager;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Renderer {
 
@@ -12,20 +19,27 @@ public class Renderer {
     private Creature creature;
     private GraphicsContext gc;
     private TileManager tileManager;
+    private Map<String, Image> cachedCreatureSprites;
+    private List<Image> cachedTileImages;
 
     public Renderer(Game game, GraphicsContext gc, Creature creature, TileManager tileManager){
         this.game = game;
         this.creature = creature;
         this.gc = gc;
         this.tileManager = tileManager;
+        this.cachedCreatureSprites = new HashMap<>();
+        this.cachedTileImages = new ArrayList<>();
     }
-
-
 
     public void drawCreature() {
         if (creature == null) {
             return;
         } //Exit method if there is no creature.
+        if (cachedCreatureSprites.isEmpty()) {
+            for (String key : creature.getAllSpriteKeys()) {
+                this.cachedCreatureSprites.put(key, SwingFXUtils.toFXImage(creature.getSprite(key), null));
+            }
+        }
 
         int xPos = creature.getxPos();
         int yPos = creature.getYPos();
@@ -55,7 +69,7 @@ public class Renderer {
             }
         }
         gc.drawImage(
-                SwingFXUtils.toFXImage(creature.getSprite(spriteKey), null),
+                cachedCreatureSprites.get(spriteKey),
                 xPos,
                 yPos,
                 game.getTileSize(),
@@ -67,12 +81,18 @@ public class Renderer {
     }
 
     public void drawTiles() {
+            if (this.cachedTileImages.isEmpty()) {
+                for (Tile tile : tileManager.getListOfTiles()){
+                    cachedTileImages.add(SwingFXUtils.toFXImage(tile.getTileImage(), null));
+                }
+            }
+
         int column = 0;
         int row = 0;
         int x = 0;
         int y = 0;
         while (column < game.getMaxScreenColumn() && row < game.getMaxScreenRow()) {
-            gc.drawImage(tileManager.getListOfTiles().getFirst().getTileImage(), x, y, game.getTileSize(), game.getTileSize());
+            gc.drawImage(cachedTileImages.getFirst(), x, y, game.getTileSize(), game.getTileSize());
             column++;
             x += game.getTileSize();
 
@@ -95,4 +115,6 @@ public class Renderer {
     public void setCreature(Creature creature){
         this.creature = creature;
     }
+
+
 }
