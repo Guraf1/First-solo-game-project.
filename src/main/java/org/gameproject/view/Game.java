@@ -4,13 +4,12 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import org.gameproject.entities.Player;
+import org.gameproject.entities.creatures.Player;
 import org.gameproject.util.KeyHandler;
 import javafx.scene.canvas.Canvas;
+import org.gameproject.util.TileManager;
 
 public class Game extends Application {
 
@@ -19,10 +18,14 @@ public class Game extends Application {
     final int scale = 3; // Scale factor for the tiles
 
     final int tileSize = originalTileSize * scale; // 96x96 tiles after scaling
-    final int maxScreenCol = 16; // Maximum columns on the screen
+    final int maxScreenColumn = 20; // Maximum columns on the screen
     final int maxScreenRow = 12; // Maximum rows on the screen
-    final int screenWidth = tileSize * maxScreenCol; // 1536 pixels wide
+    final int screenWidth = tileSize * maxScreenColumn; // 1920 pixels wide
     final int screenHeight = tileSize * maxScreenRow; // 1152 pixels tall
+
+
+    //Controller
+    private GameController gameController;
 
     //Game loop
     private AnimationTimer gameLoop;
@@ -32,10 +35,13 @@ public class Game extends Application {
     private Canvas canvas;
 
     //Key handler instance
-    private final KeyHandler keyHandler = KeyHandler.get();
+    private KeyHandler keyHandler;
 
     //Player instance
-    private Player player = new Player(this);
+    private Player player;
+
+    //Tile manager
+    private TileManager tileManager;
 
     public Game() {
 
@@ -43,7 +49,15 @@ public class Game extends Application {
 
     @Override
     public void start(Stage window) {
+        this.keyHandler = KeyHandler.get();
+        this.player = new Player(this);
         this.canvas = new Canvas(this.screenWidth, this.screenHeight);
+        this.gameController = new GameController(this);
+
+
+
+
+
         startGameLoop();
         Pane root = new Pane();
         root.getChildren().add(this.canvas);
@@ -56,6 +70,13 @@ public class Game extends Application {
         gameScene.setOnKeyReleased(event -> {
             keyHandler.handleKeyRelease(event.getCode());
         });
+
+        //Plan was to make window resizeable without it screwing up the gameplay.
+//        root.widthProperty().addListener((obs, oldVal, newVal) -> {
+//            canvas.setWidth(newVal.doubleValue());
+//            int newMaxScreenColumn = (int) (newVal.doubleValue() / tileSize);
+//            updateVisibleArea(newMaxScreenColumn, maxScreenRow);
+//        });
 
 
         window.setScene(gameScene);
@@ -78,31 +99,55 @@ public class Game extends Application {
      */
     public void startGameLoop() {
         this.gameLoop = new AnimationTimer() {
-            private long lastTime = System.nanoTime(); // Initialize lastTime to the current time
-            private double delta = 0;
-            private int drawCount = 0;
-            private long timer = 0;
+            private long lastTime = System.nanoTime();
+            private double updateAccumulator = 0;
+            private double frameAccumulator = 0;
+            private long fpsTimer = 0;
+            private int frameCount = 0;
 
             @Override
             public void handle(long now) {
+                long elapsedNanos = now - lastTime;
+                lastTime = now;
 
-
-                double drawInterval = 1_000_000_000.0 / FPS; // Interval in nanoseconds
-                delta += (now - lastTime) / drawInterval; // Calculate delta time
-                timer += (now - lastTime);
-                lastTime = now; // Update lastTime to the current time
-
-
-                if (delta >= 1) { // If enough time has passed
-                    update();
-                    draw();
-                    delta--; // Decrease delta by 1 to reset for the next frame
-                    drawCount++;
+                // Skip if we had a very large elapsed time
+                if (elapsedNanos > 1_000_000_000) {
+                    updateAccumulator = 0;
+                    frameAccumulator = 0;
+                    fpsTimer = 0;
+                    return;
                 }
-                if (timer >= 1_000_000_000) { // If 1 second has passed
-                    System.out.println("FPS: " + drawCount);
-                    drawCount = 0; // Reset draw count for the next second
-                    timer = 0; // Reset timer
+
+                // FPS counting
+                fpsTimer += elapsedNanos;
+
+                // Calculate intervals
+                double updateInterval = 1_000_000_000.0 / FPS;
+                double frameInterval = 1_000_000_000.0 / FPS; // Set frame rate equal to update rate
+
+                // Update game logic at fixed rate
+                updateAccumulator += elapsedNanos;
+                int updateCount = 0;
+                while (updateAccumulator >= updateInterval && updateCount < 5) {
+                    update();
+                    updateAccumulator -= updateInterval;
+                    updateCount++;
+                }
+
+                // Draw only when enough time has passed for next frame
+                frameAccumulator += elapsedNanos;
+                if (frameAccumulator >= frameInterval) {
+                    draw();
+                    frameAccumulator -= frameInterval;
+                    frameCount++;
+                }
+
+                // Display FPS counter
+                if (fpsTimer >= 1_000_000_000) {
+                    final int finalCount = frameCount;
+                    Platform.runLater(() -> System.out.println("FPS: " + finalCount));
+                    frameCount = 0;
+                    fpsTimer = 0;
                 }
             }
         };
@@ -114,13 +159,17 @@ public class Game extends Application {
      * This method is called in a loop to continuously update the game visuals.
      */
     public void draw() {
-        GraphicsContext gc = this.canvas.getGraphicsContext2D();
-        player.draw(gc);
-
+        gameController.clearOldFrame();
+        gameController.drawTiles();
+        gameController.drawCreature(player);
     }
 
     public void update(){
         player.update();
+    }
+
+    public void writeErrorToFile(String message, Exception e){
+    //TODO: Kanskje sjå på seinare...
     }
 
     public static void appMain(String[] args) {
@@ -154,5 +203,24 @@ public class Game extends Application {
         return this.screenHeight;
     }
 
+    /**
+     * Returns the maximum number of tile sizes for the height of the program's window.
+     * @return Max number of tile sizes for the height of the program's window.
+     */
+    public int getMaxScreenColumn(){
+        return this.maxScreenColumn;
+    }
 
+    /**
+     * Returns the maximum number of tile sizes for the width of the program's window.
+     *
+     * @return Max number of tile sizes for the width of the program's window.
+     */
+    public int getMaxScreenRow() {
+        return this.maxScreenRow;
+    }
+
+    public Canvas getCanvas() {
+        return this.canvas;
+    }
 }
