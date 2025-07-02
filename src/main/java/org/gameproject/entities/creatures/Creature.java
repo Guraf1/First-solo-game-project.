@@ -3,6 +3,9 @@ package org.gameproject.entities.creatures;
 import javafx.scene.image.Image;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class Creature {
 
@@ -13,7 +16,8 @@ public abstract class Creature {
     private final int level;
     private boolean isAlive;
     private int speed;
-    protected BufferedImage up1, up2, down1, down2, left1, left2, right1, right2; //walk sprites; //TODO: bytt fra Image -> BufferedImage
+    private final List<String> allSpriteKeys;
+    protected BufferedImage up1, up2, down1, down2, left1, left2, right1, right2; //walk sprites;
     protected BufferedImage idleUp, idleDown, idleLeft, idleRight;
     protected String lastDirection = "down"; // Last direction a creature moved
     protected int spriteCounter = 0;
@@ -29,6 +33,12 @@ public abstract class Creature {
         this.attackPower = attackPower;
         this.defence = defence;
         this.level = level;
+        this.allSpriteKeys = new ArrayList<>();
+        this.allSpriteKeys.addAll(Arrays.asList(
+                "up1", "up2", "down1", "down2",
+                "left1", "left2", "right1", "right2",
+                "idleUp", "idleDown", "idleLeft", "idleRight"
+        ));
     }
 
     public void attack() {
@@ -105,6 +115,10 @@ public abstract class Creature {
      */
     public Creature getCreatureClass(){
         return this;
+    }
+
+    public List<String> getAllSpriteKeys() {
+        return this.allSpriteKeys;
     }
 
     public boolean isMoving(){
