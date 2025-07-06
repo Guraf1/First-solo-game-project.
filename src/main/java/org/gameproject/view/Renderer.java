@@ -5,9 +5,11 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.gameproject.entities.creatures.Creature;
 import org.gameproject.entities.map.Tile;
-import org.gameproject.util.KeyHandler;
 import org.gameproject.util.TileManager;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +23,9 @@ public class Renderer {
     private TileManager tileManager;
     private Map<String, Image> cachedCreatureSprites;
     private List<Image> cachedTileImages;
+    private int[][] mapTileNumber;
+    private final int playerXPosition; //The player's x position on the screen.
+    private final int playerYPosition; //The player's y position on the screen.
 
     public Renderer(Game game, GraphicsContext gc, Creature creature, TileManager tileManager){
         this.game = game;
@@ -29,6 +34,11 @@ public class Renderer {
         this.tileManager = tileManager;
         this.cachedCreatureSprites = new HashMap<>();
         this.cachedTileImages = new ArrayList<>();
+        this.mapTileNumber = new int[game.getMaxScreenColumn()][game.getMaxScreenRow()];
+        this.playerXPosition = (game.getScreenWidth()/2) - (game.getTileSize()/2); //Center to the middle
+        this.playerYPosition = (game.getScreenHeight()/2) - (game.getTileSize()/2); //Center to the middle
+        String mapToLoad = "/maps/map01.txt";
+        loadMap(mapToLoad);
     }
 
     public void drawCreature() {
@@ -41,8 +51,8 @@ public class Renderer {
             }
         }
 
-        int xPos = creature.getxPos();
-        int yPos = creature.getYPos();
+        int xPos = creature.getWorldX();
+        int yPos = creature.getWorldY();
         this.gc.setImageSmoothing(false);
 
         String direction = creature.getLastDirection();
@@ -70,8 +80,8 @@ public class Renderer {
         }
         gc.drawImage(
                 cachedCreatureSprites.get(spriteKey),
-                xPos,
-                yPos,
+                this.playerXPosition,
+                this.playerYPosition,
                 game.getTileSize(),
                 game.getTileSize());
     }
@@ -92,7 +102,14 @@ public class Renderer {
         int x = 0;
         int y = 0;
         while (column < game.getMaxScreenColumn() && row < game.getMaxScreenRow()) {
-            gc.drawImage(cachedTileImages.getFirst(), x, y, game.getTileSize(), game.getTileSize());
+            int tileNumber = mapTileNumber[column][row];
+
+            gc.drawImage(cachedTileImages.get(tileNumber),
+                    x,
+                    y,
+                    game.getTileSize(),
+                    game.getTileSize());
+
             column++;
             x += game.getTileSize();
 
@@ -104,6 +121,35 @@ public class Renderer {
             }
         }
     }
+
+    public void loadMap(String mapToLoadPath){
+
+        try (InputStream inputStream = getClass().getResourceAsStream("/maps/map01.txt");
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+
+                 int column = 0;
+                 int row = 0;
+
+            while(column < game.getMaxScreenColumn() && row < game.getMaxScreenRow()) {
+                     String line = reader.readLine();
+
+                     while (column < game.getMaxScreenColumn()) {
+                         String[] numbers = line.split(" ");
+                         int number = Integer.parseInt(numbers[column]);
+
+                         mapTileNumber[column][row] = number;
+                         column++;
+                     }
+                     if (column == game.getMaxScreenColumn()) {
+                         column = 0;
+                         row++;
+                     }
+                 }
+             } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void clear(){
         gc.clearRect(0,0, game.getScreenWidth(), game.getScreenHeight());
     }
