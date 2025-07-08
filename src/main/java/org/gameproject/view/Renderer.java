@@ -18,18 +18,19 @@ import java.util.Map;
 public class Renderer {
 
     private Game game;
+    private Creature player; //Used to get coordinate logic based on specifically the player's coordinates.
     private Creature creature;
     private GraphicsContext gc;
-    private TileManager tileManager;
-    private Map<String, Image> cachedCreatureSprites;
-    private List<Image> cachedTileImages;
-    private int[][] mapTileNumber;
+    private final TileManager tileManager;
+    private final Map<String, Image> cachedCreatureSprites;
+    private final List<Image> cachedTileImages;
+    private final int[][] mapTileNumber;
     private final int playerXPosition; //The player's x position on the screen.
     private final int playerYPosition; //The player's y position on the screen.
 
-    public Renderer(Game game, GraphicsContext gc, Creature creature, TileManager tileManager){
+    public Renderer(Game game, GraphicsContext gc, Creature player, TileManager tileManager){
         this.game = game;
-        this.creature = creature;
+        this.player = player;
         this.gc = gc;
         this.tileManager = tileManager;
         this.cachedCreatureSprites = new HashMap<>();
