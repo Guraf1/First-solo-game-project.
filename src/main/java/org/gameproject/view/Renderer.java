@@ -35,10 +35,10 @@ public class Renderer {
         this.tileManager = tileManager;
         this.cachedCreatureSprites = new HashMap<>();
         this.cachedTileImages = new ArrayList<>();
-        this.mapTileNumber = new int[game.getMaxScreenColumn()][game.getMaxScreenRow()];
+        this.mapTileNumber = new int[game.getMaxWorldCol()][game.getMaxWorldRow()];
         this.playerXPosition = (game.getScreenWidth()/2) - (game.getTileSize()/2); //Center to the middle
         this.playerYPosition = (game.getScreenHeight()/2) - (game.getTileSize()/2); //Center to the middle
-        String mapToLoad = "/maps/map01.txt";
+        String mapToLoad = "/maps/worldMap01.txt";
         loadMap(mapToLoad);
     }
 
@@ -95,30 +95,37 @@ public class Renderer {
             if (this.cachedTileImages.isEmpty()) {
                 for (Tile tile : tileManager.getListOfTiles()){
                     cachedTileImages.add(SwingFXUtils.toFXImage(tile.getTileImage(), null));
+
                 }
             }
 
-        int column = 0;
-        int row = 0;
-        int x = 0;
-        int y = 0;
-        while (column < game.getMaxScreenColumn() && row < game.getMaxScreenRow()) {
-            int tileNumber = mapTileNumber[column][row];
+        int worldColumn = 0;
+        int worldRow = 0;
 
-            gc.drawImage(cachedTileImages.get(tileNumber),
-                    x,
-                    y,
-                    game.getTileSize(),
-                    game.getTileSize());
+        while (worldColumn < game.getMaxWorldCol() && worldRow < game.getMaxWorldRow()) {
+            int tileNumber = mapTileNumber[worldColumn][worldRow];
 
-            column++;
-            x += game.getTileSize();
+            int worldX = worldColumn * game.getTileSize();
+            int worldY = worldRow * game.getTileSize();
 
-            if (column == game.getMaxScreenColumn()) {
-                column = 0;
-                x = 0;
-                row++;
-                y += game.getTileSize();
+            int screenX = worldX - player.getWorldX() + playerXPosition;
+            int screenY = worldY - player.getWorldY() + playerYPosition;
+
+            if (worldX + game.getTileSize()*2 > player.getWorldX() - playerXPosition &&
+                worldX - game.getTileSize()*2 < player.getWorldX() + playerXPosition &&
+                worldY + game.getTileSize()*2 > player.getWorldY() - playerYPosition &&
+                worldY - game.getTileSize()*2 < player.getWorldY() + playerYPosition) {
+                gc.drawImage(cachedTileImages.get(tileNumber),
+                        screenX,
+                        screenY,
+                        game.getTileSize(),
+                        game.getTileSize());
+            }
+                worldColumn++;
+
+            if (worldColumn == game.getMaxWorldCol()) {
+                worldColumn = 0;
+                worldRow++;
             }
         }
     }
