@@ -4,6 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.gameproject.entities.creatures.Creature;
+import org.gameproject.entities.creatures.Player;
 import org.gameproject.entities.map.Tile;
 import org.gameproject.util.TileManager;
 
@@ -123,30 +124,29 @@ public class Renderer {
         }
     }
 
-    public void loadMap(String mapToLoadPath){
-
-        try (InputStream inputStream = getClass().getResourceAsStream("/maps/map01.txt");
+    public void loadMap(String mapToLoadPath) {
+        try (InputStream inputStream = getClass().getResourceAsStream(mapToLoadPath);
              BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 
-                 int column = 0;
-                 int row = 0;
+            int col = 0;
+            int row = 0;
 
-            while(column < game.getMaxScreenColumn() && row < game.getMaxScreenRow()) {
-                     String line = reader.readLine();
 
-                     while (column < game.getMaxScreenColumn()) {
-                         String[] numbers = line.split(" ");
-                         int number = Integer.parseInt(numbers[column]);
+            while (row < game.getMaxWorldRow() && row < game.getMaxWorldCol()) {
+                String line = reader.readLine();
 
-                         mapTileNumber[column][row] = number;
-                         column++;
-                     }
-                     if (column == game.getMaxScreenColumn()) {
-                         column = 0;
-                         row++;
-                     }
-                 }
-             } catch (Exception e) {
+                while (col < game.getMaxWorldCol()){
+                   String[] numbers = line.split(" ");
+                    int number = Integer.parseInt(numbers[col]);
+                    mapTileNumber[col][row] = number;
+                    col++;
+                }
+                if(col == game.getMaxWorldCol()){
+                    col = 0;
+                    row++;
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
