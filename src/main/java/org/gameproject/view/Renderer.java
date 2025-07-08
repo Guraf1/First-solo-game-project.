@@ -43,48 +43,41 @@ public class Renderer {
     }
 
     public void drawCreature() {
-        if (creature == null) {
-            return;
-        } //Exit method if there is no creature.
         if (cachedCreatureSprites.isEmpty()) {
-            for (String key : creature.getAllSpriteKeys()) {
-                this.cachedCreatureSprites.put(key, SwingFXUtils.toFXImage(creature.getSprite(key), null));
+            for (String key : player.getAllSpriteKeys()) {
+                this.cachedCreatureSprites.put(key, SwingFXUtils.toFXImage(player.getSprite(key), null));
             }
         }
-
-        int xPos = creature.getWorldX();
-        int yPos = creature.getWorldY();
-        this.gc.setImageSmoothing(false);
-
-        String direction = creature.getLastDirection();
-        int spriteNumber = creature.getSpriteNum();
-
-        String spriteKey;
-        if (creature.isMoving()) {
-            spriteKey = direction + spriteNumber; //e.g. left1 (to get the correct sprite)
+        int drawX;
+        int drawY;
+        if (creature instanceof Player){
+            drawX = this.playerXPosition;
+            drawY = this.playerYPosition;
         } else {
-            switch (direction) {
-                case "up":
-                    spriteKey = "idleUp";
-                    break;
-                case "left":
-                    spriteKey = "idleLeft";
-                    break;
-                case "right":
-                    spriteKey = "idleRight";
-                    break;
-                case "down":
-                    spriteKey = "idleDown";
-                default:
-                    spriteKey = "idle" + capitalize(direction);
-            }
+            drawX = creature.getWorldX() - this.player.getWorldX() + playerXPosition;
+            drawY = creature.getWorldY() - this.player.getWorldY() + playerYPosition;
         }
+
+        // Get appropriate sprite based on creature state
+        String spriteKey = getSpriteKeyForCreature(creature);
+
+
+        this.gc.setImageSmoothing(false);
         gc.drawImage(
                 cachedCreatureSprites.get(spriteKey),
-                this.playerXPosition,
-                this.playerYPosition,
+                drawX,
+                drawY,
                 game.getTileSize(),
                 game.getTileSize());
+    }
+
+    private String getSpriteKeyForCreature(Creature creature) {
+        String direction = creature.getLastDirection();
+        if (creature.isMoving()) {
+            return direction + creature.getSpriteNum();
+        } else {
+            return "idle" + capitalize(direction);
+        }
     }
     private String capitalize(String string){
         if (string == null || string.isEmpty()) return string;
