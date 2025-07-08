@@ -15,7 +15,7 @@ public class GameController {
         this.tileManager = new TileManager(game);
         this.renderer = new Renderer(this.game,
                 null,
-                null,
+                game.getPlayer(),
                 this.tileManager);
     }
 
