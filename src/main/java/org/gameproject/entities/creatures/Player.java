@@ -6,7 +6,6 @@ import org.gameproject.view.Game;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -22,12 +21,13 @@ public class Player extends Creature {
 
 
 
+
     public Player(Game gameWindow){
         super("Stig", 100, 12, 5, 1);
         this.gameWindow = gameWindow;
         loadPlayerImage(); // Load player images
-        xPos = 100;
-        yPos = 100;
+        worldX = gameWindow.getWorldWidth()/2;
+        worldY = gameWindow.getWorldHeight()/2;
     }
 
     /**
@@ -74,7 +74,7 @@ public class Player extends Creature {
     }
     private void loadPlayerImageFallback(){
         BufferedImage fallback = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
-        java.awt.Graphics2D graphics = fallback.createGraphics();
+        Graphics2D graphics = fallback.createGraphics();
         graphics.setColor(Color.MAGENTA);
         graphics.fillRect(0,0,gameWindow.getTileSize(), gameWindow.getTileSize());
 
@@ -98,22 +98,22 @@ public class Player extends Creature {
     public void update(){
         if (keyHandler.isUpPressed()) {
             isMoving = true;
-            yPos -= playerSpeed; // Move player up
+            worldY -= playerSpeed; // Move player up
             lastDirection = "up";
         }
         if (keyHandler.isDownPressed()) {
             isMoving = true;
-            yPos += playerSpeed; // Move player down
+            worldY += playerSpeed; // Move player down
             lastDirection = "down";
         }
         if (keyHandler.isLeftPressed()) {
             isMoving = true;
-            xPos -= playerSpeed; // Move player left
+            worldX -= playerSpeed; // Move player left
             lastDirection = "left";
         }
         if (keyHandler.isRightPressed()) {
             isMoving = true;
-            xPos += playerSpeed; // Move player right
+            worldX += playerSpeed; // Move player right
             lastDirection = "right";
         }
         spriteCounter++;
