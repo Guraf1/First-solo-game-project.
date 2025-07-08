@@ -34,24 +34,48 @@ public class TileManager {
                 String tileImagePath = "/tiles/images/";
                 BufferedImage grassTileImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
                         tileImagePath + "grassland.png")));
-                BufferedImage treeFlavour = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(tileImagePath + "/spice/tree.png")));
-                listOfTiles.add(new Tile.TileBuilder(16, 16, grassTileImage).build());
+                listOfTiles.add(new Tile.TileBuilder(16, 16, grassTileImage).name("grassTileImage").build());
                 listOfSprites.add(grassTileImage);
 
                 BufferedImage mossyRoadImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
                         tileImagePath + "mossyRoad.png")));
-                listOfTiles.add(new Tile.TileBuilder(16,16,mossyRoadImage).build());
+                listOfTiles.add(new Tile.TileBuilder(16,16,mossyRoadImage).name("mossyRoadImage").build());
                 listOfSprites.add(mossyRoadImage);
 
                 BufferedImage stoneRoadImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
                         tileImagePath + "stoneRoad.png")));
-                listOfTiles.add(new Tile.TileBuilder(16,16, stoneRoadImage).build());
+                listOfTiles.add(new Tile.TileBuilder(16,16, stoneRoadImage).name("stoneRoadImage").build());
                 listOfSprites.add(stoneRoadImage);
 
                 BufferedImage oceanImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
                         tileImagePath + "ocean.png")));
-                listOfTiles.add(new Tile.TileBuilder(16,16,oceanImage).build());
+                listOfTiles.add(new Tile.TileBuilder(16,16,oceanImage).name("ocean").build());
                 listOfSprites.add(oceanImage);
+
+                BufferedImage seaImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
+                        tileImagePath + "sea.png")));
+                listOfTiles.add(new Tile.TileBuilder(16,16,seaImage).name("seaImage").build());
+                listOfSprites.add(seaImage);
+
+                BufferedImage sandImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
+                        tileImagePath + "sand.png")));
+                listOfTiles.add(new Tile.TileBuilder(16,16,sandImage).name("sand").build());
+                listOfSprites.add(sandImage);
+
+                BufferedImage grassWithTreeImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
+                        tileImagePath + "grassWithTree.png")));
+                listOfTiles.add(new Tile.TileBuilder(16,16,grassWithTreeImage).name("grassWithTree").build());
+                listOfSprites.add(grassWithTreeImage);
+
+                BufferedImage grassWithRockImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
+                        tileImagePath + "grassWithRock.png")));
+                listOfTiles.add(new Tile.TileBuilder(16,16,grassWithRockImage).name("grassWithRock").build());
+                listOfSprites.add(grassWithRockImage);
+
+                BufferedImage sandWithRockImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
+                        tileImagePath + "sandWithRock.png")));
+                listOfTiles.add(new Tile.TileBuilder(16,16,sandWithRockImage).name("sandWithRock").build());
+                listOfSprites.add(sandWithRockImage);
 
 
                 methodSuccessful = true; //Method succeeds at the end of the loop if no exception is thrown.
