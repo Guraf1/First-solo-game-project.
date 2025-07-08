@@ -14,14 +14,20 @@ import org.gameproject.util.TileManager;
 public class Game extends Application {
 
     //Screen settings
-    final int originalTileSize = 32; // 32x32 tiles
-    final int scale = 3; // Scale factor for the tiles
+    private final int originalTileSize = 32; // 32x32 tiles
+    private final int scale = 3; // Scale factor for the tiles
 
-    final int tileSize = originalTileSize * scale; // 96x96 tiles after scaling
-    final int maxScreenColumn = 20; // Maximum columns on the screen
-    final int maxScreenRow = 12; // Maximum rows on the screen
-    final int screenWidth = tileSize * maxScreenColumn; // 1920 pixels wide
-    final int screenHeight = tileSize * maxScreenRow; // 1152 pixels tall
+    private final int tileSize = originalTileSize * scale; // 96x96 tiles after scaling
+    private final int maxScreenColumn = 20; // Maximum columns on the screen
+    private final int maxScreenRow = 12; // Maximum rows on the screen
+    private final int screenWidth = tileSize * maxScreenColumn; // 1920 pixels wide
+    private final int screenHeight = tileSize * maxScreenRow; // 1152 pixels tall
+
+    //World settings
+    private final int maxWorldCol = 50;
+    private final int maxWorldRow = 50;
+    private final int worldWidth = tileSize * maxWorldCol; //96*50 = 4800 pixels
+    private final int worldHeight = tileSize * maxWorldRow; //96*50 = 4800 pixels
 
 
     //Controller
@@ -40,9 +46,6 @@ public class Game extends Application {
     //Player instance
     private Player player;
 
-    //Tile manager
-    private TileManager tileManager;
-
     public Game() {
 
     }
@@ -53,9 +56,6 @@ public class Game extends Application {
         this.player = new Player(this);
         this.canvas = new Canvas(this.screenWidth, this.screenHeight);
         this.gameController = new GameController(this);
-
-
-
 
 
         startGameLoop();
@@ -93,6 +93,7 @@ public class Game extends Application {
         root.requestFocus();
 
     }
+
     /**
      * Starts the game loop that updates and draws the game at a fixed frame rate.
      * This method initializes the AnimationTimer and starts it.
@@ -164,12 +165,12 @@ public class Game extends Application {
         gameController.drawCreature(player);
     }
 
-    public void update(){
+    public void update() {
         player.update();
     }
 
-    public void writeErrorToFile(String message, Exception e){
-    //TODO: Kanskje sjå på seinare...
+    public void writeErrorToFile(String message, Exception e) {
+        //TODO: Kanskje sjå på seinare...
     }
 
     public static void appMain(String[] args) {
@@ -205,9 +206,10 @@ public class Game extends Application {
 
     /**
      * Returns the maximum number of tile sizes for the height of the program's window.
+     *
      * @return Max number of tile sizes for the height of the program's window.
      */
-    public int getMaxScreenColumn(){
+    public int getMaxScreenColumn() {
         return this.maxScreenColumn;
     }
 
@@ -222,5 +224,26 @@ public class Game extends Application {
 
     public Canvas getCanvas() {
         return this.canvas;
+    }
+
+
+    public int getMaxWorldCol() {
+        return maxWorldCol;
+    }
+
+    public int getMaxWorldRow() {
+        return maxWorldRow;
+    }
+
+    public Player getPlayer(){
+        return this.player;
+    }
+
+    public int getWorldWidth(){
+        return this.worldWidth;
+    }
+
+    public int getWorldHeight(){
+        return this.worldHeight;
     }
 }
