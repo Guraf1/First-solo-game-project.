@@ -1,0 +1,11 @@
+The number and its corresponding tile information is saved in this file.
+
+0 = grassLand.png
+1 = mossyRoad.png
+2 = stoneRoad.png
+3 = ocean.png
+4 = sea.png
+5 = sand.png
+6 = grassWithTree.png
+7 = grassWithRock.png
+8 = sandWithRock.png

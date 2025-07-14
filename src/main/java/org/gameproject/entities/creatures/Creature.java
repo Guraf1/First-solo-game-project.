@@ -1,13 +1,11 @@
 package org.gameproject.entities.creatures;
 
-import javafx.scene.image.Image;
-
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class Creature {
+public abstract class Creature implements Updateable{
 
     private final String name;
     private final double health;
@@ -22,8 +20,8 @@ public abstract class Creature {
     protected String lastDirection = "down"; // Last direction a creature moved
     protected int spriteCounter = 0;
     protected int spriteNum = 1;
-    protected int xPos;
-    protected int yPos;
+    protected int worldX;
+    protected int worldY;
     protected boolean isMoving;
 
 
@@ -98,16 +96,16 @@ public abstract class Creature {
      * Returns the x position of the creature.
      * @return x position of the creature.
      */
-    public int getxPos() {
-        return xPos;
+    public int getWorldX() {
+        return worldX;
     }
 
     /**
      * Returns the y position of the creature.
      * @return y position of the creature.
      */
-    public int getYPos(){
-        return yPos;
+    public int getWorldY(){
+        return worldY;
     }
     /**
      * Returns this class object.

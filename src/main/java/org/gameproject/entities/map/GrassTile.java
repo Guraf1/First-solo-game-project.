@@ -1,4 +1,9 @@
 package org.gameproject.entities.map;
 
-public class GrassTile {
-}
+//public class GrassTile extends Tile{
+
+//    public GrassTile(int tileWidth, int tileHeight, ){
+//        super();
+//    }
+
+//}
