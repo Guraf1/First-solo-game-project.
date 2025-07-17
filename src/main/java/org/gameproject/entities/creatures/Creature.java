@@ -1,18 +1,23 @@
 package org.gameproject.entities.creatures;
 
+import org.gameproject.events.OnDeathEvent;
+import org.gameproject.observer.Observer;
+import org.gameproject.observer.ObserverHandler;
+
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class Creature implements Updateable{
+public abstract class Creature implements Updateable, Observer{
 
+    ObserverHandler observerHandler = ObserverHandler.get();
     private final String name;
     private final double health;
     private final double attackPower;
     private final double defence;
     private final int level;
-    private boolean isAlive;
+    protected boolean isAlive;
     private int speed;
     private final List<String> allSpriteKeys;
     protected BufferedImage up1, up2, down1, down2, left1, left2, right1, right2; //walk sprites;
@@ -44,6 +49,8 @@ public abstract class Creature implements Updateable{
     }
 
     public abstract void update();
+    public abstract void notify(Object event);
+
 
 
     /**
@@ -122,6 +129,10 @@ public abstract class Creature implements Updateable{
     public boolean isMoving(){
         return this.isMoving;
     }
+
+    public abstract void onDeath();
+
+
 
 
 
