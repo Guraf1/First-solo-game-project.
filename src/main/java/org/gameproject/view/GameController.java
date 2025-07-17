@@ -40,5 +40,10 @@ public class GameController {
         this.renderer.drawTiles();
     }
 
+    public void changeMap(String mapToLoad){
+        this.renderer.setMapToLoad(mapToLoad);
+        this.renderer.loadMap();
+    }
+
 
 }
