@@ -15,7 +15,7 @@ public class Game extends Application {
 
     //Screen settings
     private final int originalTileSize = 32; // 32x32 tiles
-    private final int scale = 3; // Scale factor for the tiles
+    private final int scale = 2; // Scale factor for the tiles
 
     private final int tileSize = originalTileSize * scale; // 96x96 tiles after scaling
     private final int maxScreenColumn = 20; // Maximum columns on the screen
@@ -53,7 +53,8 @@ public class Game extends Application {
     @Override
     public void start(Stage window) {
         this.keyHandler = KeyHandler.get();
-        this.player = new Player(this);
+        Player.initialize(this);
+        this.player = Player.get();
         this.canvas = new Canvas(this.screenWidth, this.screenHeight);
         this.gameController = new GameController(this);
 
