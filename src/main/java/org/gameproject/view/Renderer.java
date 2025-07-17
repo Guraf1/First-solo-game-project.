@@ -28,6 +28,7 @@ public class Renderer {
     private final int[][] mapTileNumber;
     private final int playerXPosition; //The player's x position on the screen.
     private final int playerYPosition; //The player's y position on the screen.
+    private String mapToLoad;
 
     public Renderer(Game game, GraphicsContext gc, Creature player, TileManager tileManager){
         this.game = game;
@@ -39,8 +40,8 @@ public class Renderer {
         this.mapTileNumber = new int[game.getMaxWorldCol()][game.getMaxWorldRow()];
         this.playerXPosition = (game.getScreenWidth()/2) - (game.getTileSize()/2); //Center to the middle
         this.playerYPosition = (game.getScreenHeight()/2) - (game.getTileSize()/2); //Center to the middle
-        String mapToLoad = "/maps/worldMap01.txt";
-        loadMap(mapToLoad);
+        this.mapToLoad = "/maps/worldMap01.txt";
+        loadMap();
     }
 
     public void drawCreature() {
@@ -124,8 +125,8 @@ public class Renderer {
         }
     }
 
-    public void loadMap(String mapToLoadPath) {
-        try (InputStream inputStream = getClass().getResourceAsStream(mapToLoadPath);
+    public void loadMap() {
+        try (InputStream inputStream = getClass().getResourceAsStream(this.mapToLoad);
              BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
 
             int col = 0;
@@ -163,5 +164,8 @@ public class Renderer {
         this.creature = creature;
     }
 
+    public void setMapToLoad(String mapToLoad){
+        this.mapToLoad = mapToLoad;
+    }
 
 }
