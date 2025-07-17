@@ -1,5 +1,6 @@
 package org.gameproject.entities.creatures;
 
+import org.gameproject.events.OnDeathEvent;
 import org.gameproject.util.KeyHandler;
 import org.gameproject.view.Game;
 
@@ -13,21 +14,50 @@ import java.util.Objects;
  * This class contains attributes and methods related to the player.
  */
 public class Player extends Creature {
+    private static Player instance;
 
     Game gameWindow;
     KeyHandler keyHandler = KeyHandler.get();
-    private final int playerSpeed = 3; // Default player speed
+    private final int playerSpeed = 2; // Default player speed
+    private int money = 0;
 
 
 
 
 
-    public Player(Game gameWindow){
+
+    private Player(Game gameWindow){
         super("Stig", 100, 12, 5, 1);
         this.gameWindow = gameWindow;
         loadPlayerImage(); // Load player images
         worldX = gameWindow.getWorldWidth()/2;
         worldY = gameWindow.getWorldHeight()/2;
+    }
+
+    public static void initialize(Game gameWindow){
+        if (instance == null) {
+            instance = new Player(gameWindow);
+        }
+    }
+
+    public static Player get(){
+        if (instance == null) {
+            throw new IllegalStateException("Player has not been initialized. Call Player.initialize() first.");
+        }
+        return instance;
+
+    }
+
+    @Override
+    public void notify(Object event) {
+        if (event instanceof OnDeathEvent onDeathEvent) {
+        setMoney(onDeathEvent.getMoneyReward());
+        }
+    }
+
+    @Override
+    public void onDeath() {
+        System.out.println("You died...");
     }
 
     /**
@@ -133,6 +163,14 @@ public class Player extends Creature {
         }
 
     }
+
+    public void setMoney(int deathEventMoney){
+        this.money += deathEventMoney;
+    }
+
+
+
+
 }
 
 
