@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.awt.event.*;
 
 public class Renderer {
 
@@ -25,7 +26,6 @@ public class Renderer {
     private final TileManager tileManager;
     private final Map<String, Image> cachedCreatureSprites;
     private final List<Image> cachedTileImages;
-    private final int[][] mapTileNumber;
     private final int playerXPosition; //The player's x position on the screen.
     private final int playerYPosition; //The player's y position on the screen.
     private String mapToLoad;
@@ -37,7 +37,6 @@ public class Renderer {
         this.tileManager = tileManager;
         this.cachedCreatureSprites = new HashMap<>();
         this.cachedTileImages = new ArrayList<>();
-        this.mapTileNumber = new int[game.getMaxWorldCol()][game.getMaxWorldRow()];
         this.playerXPosition = (game.getScreenWidth()/2) - (game.getTileSize()/2); //Center to the middle
         this.playerYPosition = (game.getScreenHeight()/2) - (game.getTileSize()/2); //Center to the middle
         this.mapToLoad = "/maps/worldMap01.txt";
@@ -98,7 +97,7 @@ public class Renderer {
         int worldRow = 0;
 
         while (worldColumn < game.getMaxWorldCol() && worldRow < game.getMaxWorldRow()) {
-            int tileNumber = mapTileNumber[worldColumn][worldRow];
+            int tileNumber = tileManager.getMapTileNumber(worldColumn, worldRow);
 
             int worldX = worldColumn * game.getTileSize();
             int worldY = worldRow * game.getTileSize();
@@ -125,6 +124,10 @@ public class Renderer {
         }
     }
 
+    public void drawMoney(){
+
+    }
+
     public void loadMap() {
         try (InputStream inputStream = getClass().getResourceAsStream(this.mapToLoad);
              BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
@@ -139,7 +142,7 @@ public class Renderer {
                 while (col < game.getMaxWorldCol()){
                    String[] numbers = line.split(" ");
                     int number = Integer.parseInt(numbers[col]);
-                    mapTileNumber[col][row] = number;
+                    tileManager.setMapTileNumber(col,row, number);
                     col++;
                 }
                 if(col == game.getMaxWorldCol()){
