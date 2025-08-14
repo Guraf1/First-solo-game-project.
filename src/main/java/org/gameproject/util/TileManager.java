@@ -16,10 +16,12 @@ public class TileManager {
     private Game game;
     private List<Tile> listOfTiles;
     private List<BufferedImage> listOfSprites;
+    private final int[][] mapTileNumber;
 
 
     public TileManager(Game game){
         this.game = game;
+        this.mapTileNumber = new int[game.getMaxWorldCol()][game.getMaxWorldRow()];
         listOfTiles = new ArrayList<>();
         listOfSprites = new ArrayList<>();
         appendTileImages();
@@ -49,12 +51,12 @@ public class TileManager {
 
                 BufferedImage oceanImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
                         tileImagePath + "ocean.png")));
-                listOfTiles.add(new Tile.TileBuilder(16,16,oceanImage).build());
+                listOfTiles.add(new Tile.TileBuilder(16,16,oceanImage).collision(true).build());
                 listOfSprites.add(oceanImage);
 
                 BufferedImage seaImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
                         tileImagePath + "sea.png")));
-                listOfTiles.add(new Tile.TileBuilder(16,16,seaImage).build());
+                listOfTiles.add(new Tile.TileBuilder(16,16,seaImage).collision(true).build());
                 listOfSprites.add(seaImage);
 
                 BufferedImage sandImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
@@ -64,17 +66,17 @@ public class TileManager {
 
                 BufferedImage grassWithTreeImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
                         tileImagePath + "grassWithTree.png")));
-                listOfTiles.add(new Tile.TileBuilder(16,16,grassWithTreeImage).build());
+                listOfTiles.add(new Tile.TileBuilder(16,16,grassWithTreeImage).collision(true).build());
                 listOfSprites.add(grassWithTreeImage);
 
                 BufferedImage grassWithRockImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
                         tileImagePath + "grassWithRock.png")));
-                listOfTiles.add(new Tile.TileBuilder(16,16,grassWithRockImage).build());
+                listOfTiles.add(new Tile.TileBuilder(16,16,grassWithRockImage).collision(true).build());
                 listOfSprites.add(grassWithRockImage);
 
                 BufferedImage sandWithRockImage = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(
                         tileImagePath + "sandWithRock.png")));
-                listOfTiles.add(new Tile.TileBuilder(16,16,sandWithRockImage).build());
+                listOfTiles.add(new Tile.TileBuilder(16,16,sandWithRockImage).collision(true).build());
                 listOfSprites.add(sandWithRockImage);
 
 
@@ -116,5 +118,22 @@ public class TileManager {
 
     public List<Tile> getListOfTiles(){
         return listOfTiles;
+    }
+
+    public int getMapTileNumber(int col, int row) {
+        if (col < 0 || col >= mapTileNumber.length || row < 0 || row >= mapTileNumber[0].length) {
+            throw new IndexOutOfBoundsException("Invalid tile coordinates: (" + col + ", " + row + ")");
+        }
+        return mapTileNumber[col][row];
+    }
+
+    public void setMapTileNumber(int col, int row, int tileNumber){
+        if (col < 0 || col >= mapTileNumber.length || row < 0 || row >= mapTileNumber[0].length) {
+            throw new IndexOutOfBoundsException("Invalid tile coordinates: (" + col + ", " + row + ")");
+        }
+        if (tileNumber < 0 || tileNumber >= listOfTiles.size()) {
+            throw new IllegalArgumentException("Invalid tile number: " + tileNumber);
+        }
+        mapTileNumber[col][row] = tileNumber;
     }
 }
