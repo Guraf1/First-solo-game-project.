@@ -54,4 +54,8 @@ public class Tile {
     public BufferedImage getTileImage(){
         return this.tileImage;
     }
+
+    public boolean isCollision(){
+        return this.collision;
+    }
 }
