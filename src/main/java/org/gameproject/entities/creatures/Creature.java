@@ -1,33 +1,38 @@
 package org.gameproject.entities.creatures;
 
-import org.gameproject.events.OnDeathEvent;
-import org.gameproject.observer.Observer;
-import org.gameproject.observer.ObserverHandler;
+import org.gameproject.events.EventHandler;
+import org.gameproject.events.GameEventListener;
 
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class Creature implements Updateable, Observer{
+public abstract class Creature implements Updateable {
 
-    ObserverHandler observerHandler = ObserverHandler.get();
+    EventHandler observerHandler = EventHandler.get();
     private final String name;
     private final double health;
     private final double attackPower;
     private final double defence;
     private final int level;
     protected boolean isAlive;
-    private int speed;
+    protected int speed;
     private final List<String> allSpriteKeys;
     protected BufferedImage up1, up2, down1, down2, left1, left2, right1, right2; //walk sprites;
     protected BufferedImage idleUp, idleDown, idleLeft, idleRight;
     protected String lastDirection = "down"; // Last direction a creature moved
     protected int spriteCounter = 0;
     protected int spriteNum = 1;
-    protected int worldX;
-    protected int worldY;
+    protected int worldX; //Represents the x position of the creature in the world.
+    protected int worldY; //Represents the y position of the creature in the world.
     protected boolean isMoving;
+    protected Rectangle hitbox;
+    protected boolean collisionState = false;
+    protected String creatureType;
+
 
 
     public Creature(String name, double health, double attackPower, double defence, int level) {
@@ -131,6 +136,22 @@ public abstract class Creature implements Updateable, Observer{
     }
 
     public abstract void onDeath();
+
+    public Rectangle getHitbox() {
+        return hitbox;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getSpeed(){
+        return speed;
+    }
+
+    public void setCollisionState(boolean state){
+        this.collisionState = state;
+    }
 
 
 
