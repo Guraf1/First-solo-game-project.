@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.gameproject.entities.creatures.Player;
+import org.gameproject.util.CollisionChecker;
 import org.gameproject.util.KeyHandler;
 import javafx.scene.canvas.Canvas;
 import org.gameproject.util.TileManager;
@@ -46,6 +47,9 @@ public class Game extends Application {
     //Player instance
     private Player player;
 
+    private CollisionChecker collisionChecker;
+    private TileManager tileManager;
+
     public Game() {
 
     }
@@ -53,18 +57,18 @@ public class Game extends Application {
     @Override
     public void start(Stage window) {
         this.keyHandler = KeyHandler.get();
+        this.canvas = new Canvas(this.screenWidth, this.screenHeight);
+        this.tileManager = new TileManager(this);
+        this.collisionChecker = new CollisionChecker(this, this.tileManager);
         Player.initialize(this);
         this.player = Player.get();
-        this.canvas = new Canvas(this.screenWidth, this.screenHeight);
-        this.gameController = new GameController(this);
-
+        this.gameController = new GameController(this, this.tileManager);
 
         startGameLoop();
         Pane root = new Pane();
         root.getChildren().add(this.canvas);
         Scene gameScene = new Scene(root, this.screenWidth, this.screenHeight);
 
-        //Setup key event handlers
         gameScene.setOnKeyPressed(event -> {
             keyHandler.handleKeyPress(event.getCode());
         });
@@ -111,23 +115,9 @@ public class Game extends Application {
             public void handle(long now) {
                 long elapsedNanos = now - lastTime;
                 lastTime = now;
-
-                // Skip if we had a very large elapsed time
-                if (elapsedNanos > 1_000_000_000) {
-                    updateAccumulator = 0;
-                    frameAccumulator = 0;
-                    fpsTimer = 0;
-                    return;
-                }
-
-                // FPS counting
                 fpsTimer += elapsedNanos;
-
-                // Calculate intervals
                 double updateInterval = 1_000_000_000.0 / FPS;
                 double frameInterval = 1_000_000_000.0 / FPS; // Set frame rate equal to update rate
-
-                // Update game logic at fixed rate
                 updateAccumulator += elapsedNanos;
                 int updateCount = 0;
                 while (updateAccumulator >= updateInterval && updateCount < 5) {
@@ -135,8 +125,6 @@ public class Game extends Application {
                     updateAccumulator -= updateInterval;
                     updateCount++;
                 }
-
-                // Draw only when enough time has passed for next frame
                 frameAccumulator += elapsedNanos;
                 if (frameAccumulator >= frameInterval) {
                     draw();
@@ -161,9 +149,7 @@ public class Game extends Application {
      * This method is called in a loop to continuously update the game visuals.
      */
     public void draw() {
-        gameController.clearOldFrame();
-        gameController.drawTiles();
-        gameController.drawCreature(player);
+        gameController.renderFrame();
     }
 
     public void update() {
@@ -236,15 +222,19 @@ public class Game extends Application {
         return maxWorldRow;
     }
 
-    public Player getPlayer(){
+    public Player getPlayer() {
         return this.player;
     }
 
-    public int getWorldWidth(){
+    public int getWorldWidth() {
         return this.worldWidth;
     }
 
-    public int getWorldHeight(){
+    public int getWorldHeight() {
         return this.worldHeight;
+    }
+
+    public CollisionChecker getCollisionChecker() {
+        return this.collisionChecker;
     }
 }
