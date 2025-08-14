@@ -1,6 +1,10 @@
 package org.gameproject.entities.creatures;
 
+import org.gameproject.events.EventHandler;
+import org.gameproject.events.GameEvent;
 import org.gameproject.events.OnDeathEvent;
+import org.gameproject.events.OnPlayerMoveEvent;
+import org.gameproject.util.CollisionChecker;
 import org.gameproject.util.KeyHandler;
 import org.gameproject.view.Game;
 
@@ -20,6 +24,7 @@ public class Player extends Creature {
     KeyHandler keyHandler = KeyHandler.get();
     private final int playerSpeed = 2; // Default player speed
     private int money = 0;
+    CollisionChecker collisionChecker;
 
 
 
@@ -32,6 +37,14 @@ public class Player extends Creature {
         loadPlayerImage(); // Load player images
         worldX = gameWindow.getWorldWidth()/2;
         worldY = gameWindow.getWorldHeight()/2;
+        this.hitbox = new Rectangle(
+                8, // Hitbox x position relative to the player
+                36,  // Hitbox y position relative to the player
+                gameWindow.getTileSize() - (gameWindow.getTileSize()/2),
+                gameWindow.getTileSize() - (gameWindow.getTileSize()/2));
+        this.collisionChecker = gameWindow.getCollisionChecker();
+        this.creatureType = "Player";
+        this.speed = playerSpeed;
     }
 
     public static void initialize(Game gameWindow){
@@ -126,26 +139,36 @@ public class Player extends Creature {
      */
     @Override
     public void update(){
-        if (keyHandler.isUpPressed()) {
-            isMoving = true;
-            worldY -= playerSpeed; // Move player up
-            lastDirection = "up";
-        }
-        if (keyHandler.isDownPressed()) {
-            isMoving = true;
-            worldY += playerSpeed; // Move player down
-            lastDirection = "down";
-        }
-        if (keyHandler.isLeftPressed()) {
-            isMoving = true;
-            worldX -= playerSpeed; // Move player left
-            lastDirection = "left";
-        }
-        if (keyHandler.isRightPressed()) {
-            isMoving = true;
-            worldX += playerSpeed; // Move player right
-            lastDirection = "right";
-        }
+//        if (keyHandler.isUpPressed()) {
+//            isMoving = true;
+//            lastDirection = "up";
+//        }
+//        if (keyHandler.isDownPressed()) {
+//            isMoving = true;
+//            lastDirection = "down";
+//        }
+//        if (keyHandler.isLeftPressed()) {
+//            isMoving = true;
+//            lastDirection = "left";
+//        }
+//        if (keyHandler.isRightPressed()) {
+//            isMoving = true;
+//            lastDirection = "right";
+//        }
+        this.collisionState = false;
+        collisionChecker.checkCollision(this);
+        processMovement();
+
+
+//        if(!collisionState && isMoving){
+//            switch (lastDirection) {
+//                case "up" -> worldY -= speed;
+//                case "down" -> worldY += speed;
+//                case "left" -> worldX -= speed;
+//                case "right" -> worldX += speed;
+//            }
+//        }
+
         spriteCounter++;
 
         if (spriteCounter > 25) {  // Change sprite every 10 frames
@@ -164,11 +187,55 @@ public class Player extends Creature {
 
     }
 
+    private void processMovement(){
+        int deltaX = 0;
+        int deltaY = 0;
+
+        isMoving = false;
+
+        if (keyHandler.isRightPressed()) {
+            deltaX += speed;
+            isMoving = true;
+            lastDirection = "right";
+        }
+        if (keyHandler.isLeftPressed()) {
+            deltaX -= speed;
+            isMoving = true;
+            lastDirection = "left";
+        }
+        if (keyHandler.isUpPressed()) {
+            deltaY -= speed;
+            isMoving = true;
+            lastDirection = "up";
+        }
+        if (keyHandler.isDownPressed()) {
+            deltaY += speed;
+            isMoving = true;
+            lastDirection = "down";
+        }
+
+        if (isMoving) {
+            this.collisionState = false;
+            boolean wouldCollide = collisionChecker.checkFutureCollision(this, deltaX, deltaY);
+            if (!wouldCollide) {
+                OnPlayerMoveEvent moveEvent = new OnPlayerMoveEvent(this, deltaX, deltaY);
+                EventHandler.get().fireEvent(moveEvent);
+            }
+        }
+
+    }
+
+    public void updatePosition(int newX, int newY) {
+        if (!collisionState && isMoving){
+            this.worldX += newX;
+            this.worldY += newY;
+        }
+
+    }
+
     public void setMoney(int deathEventMoney){
         this.money += deathEventMoney;
     }
-
-
 
 
 }
